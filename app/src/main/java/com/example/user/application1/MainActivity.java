@@ -1,6 +1,7 @@
 package com.example.user.application1;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+
+    String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,5 +45,31 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        Button settingsBttn = (Button) findViewById(R.id.Settings);
+
+        SharedPreferences settings = getSharedPreferences("PREFS", 0);
+        password = settings.getString("password", "");
+
+        settingsBttn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(password.equals("")) {
+                    Intent intent  = new Intent(getApplicationContext(), CreatePasswordActivity.class);
+                    startActivity(intent);
+                    //finish();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), EnterPasswordActivity.class);
+                    startActivity(intent);
+                    //finish();
+                }
+            }
+//                }, 2000);
+//
+//
+//            }
+        });
+
     }
 }

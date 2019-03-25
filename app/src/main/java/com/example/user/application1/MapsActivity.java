@@ -62,8 +62,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     static double latitude, longitude;
     float zoomLevel = 16.0f;
     private CircleOptions circleOptions;
-    double FTlatitude = 40.4001;
-    double FTlongitude = 49.8529;
+
+    //Home parameters made public
+//    public double FTlatitude = 40.4001;
+//    public double FTlongitude = 49.8529;
+
+
+
     private final String CHANNEL_ID = "personal_notifications";
     private final int NOTIFICATION_ID = 001;
     private final float RADIUS = 6371;
@@ -78,10 +83,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Getting parameters from SETTINGS Activity
+
+
+
 
         locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
@@ -93,15 +105,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         location = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(criteria, false));
-        //latitude = location.getLatitude();
-        //longitude = location.getLongitude();
 
-        latitude = 40.3595;
-        longitude = 49.8266;
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+        //latitude = 40.3595;
+        //longitude = 49.8266;
 
         //Instantiates a new CircleOptions object +  center/radius
         circleOptions = new CircleOptions()
-                .center( new LatLng(FTlatitude, FTlongitude) )
+                .center( new LatLng(Globals.FTlatitude, Globals.FTlongitude) ) //HERE
                 .radius( 400 )
                 .fillColor(0x40ff0000)
                 .strokeColor(Color.TRANSPARENT)
@@ -119,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //Toast.makeText(this, "Navigation", Toast.LENGTH_SHORT).show();
                 String url = "http://maps.google.com/maps?saddr=" + latMy + ","
-                        + lngMy + "&daddr=" + "40.4001000, 49.8529000";
+                        + lngMy + "&daddr=" + "40.4001000, 49.8529000"; //here
 
                 Intent navigation = new Intent(Intent.ACTION_VIEW);
                 navigation.setData(Uri.parse(url));
@@ -129,9 +142,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        float dlat = (float) (latitude - FTlatitude);
-        float dlon = (float) (longitude - FTlongitude);
-        float a = (float) (Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(latitude) * Math.cos(FTlatitude) * Math.pow((Math.sin(dlon / 2)), 2));
+        Button homeScreenBttn = (Button)findViewById(R.id.homeScreenBttn);
+        homeScreenBttn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(getApplicationContext(), MainActivity.class);
+                //how to pass information to the second screen/activity
+                startActivity(startIntent);
+            }
+        });
+
+
+        float dlat = (float) (latitude - Globals.FTlatitude);
+        float dlon = (float) (longitude - Globals.FTlongitude);
+        float a = (float) (Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(latitude) * Math.cos(Globals.FTlatitude) * Math.pow((Math.sin(dlon / 2)), 2));
         float c = (float) (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
         float d = RADIUS * c;
 
@@ -238,12 +262,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void sendWhatsAppMessage() {
         PackageManager packageManager = this.getPackageManager();
         Intent i = new Intent(Intent.ACTION_VIEW);
-        String phone = "994553358080";
-        getAddress(this, 40.4001, 49.8529);
+        //String phone = "994553358080"; //
+        //getAddress(this, 40.4001, 49.8529);
+
+        getAddress(this, location.getLatitude(), location.getLongitude());
         String message = currentAddress + "\n" + "Sent from Mnemosyne";;
 
         try {
-            String url = "https://api.whatsapp.com/send?phone="+ phone +"&text=" + URLEncoder.encode(message, "UTF-8");
+            String url = "https://api.whatsapp.com/send?phone="+ Globals.phoneNumber +"&text=" + URLEncoder.encode(message, "UTF-8");
             i.setPackage("com.whatsapp");
             i.setData(Uri.parse(url));
             if (i.resolveActivity(packageManager) != null) {
