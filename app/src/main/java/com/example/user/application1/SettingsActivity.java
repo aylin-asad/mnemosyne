@@ -2,6 +2,7 @@ package com.example.user.application1;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -47,6 +48,14 @@ public class SettingsActivity extends AppCompatActivity {
                 //String str = textBox.getText().toString();
                 Globals.FTlongitude = Double.valueOf(textBox2.getText().toString());
                 Globals.phoneNumber = textBox3.getText().toString();
+
+                SharedPreferences settings = getSharedPreferences("PREFS", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putFloat("homeLatValue", (float)Globals.FTlatitude);
+                editor.putFloat("homeLongValue", (float)Globals.FTlongitude);
+                editor.putString("phoneNumber", Globals.phoneNumber);
+                editor.apply();
+
 
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 //intent.putExtra("message", d1);
