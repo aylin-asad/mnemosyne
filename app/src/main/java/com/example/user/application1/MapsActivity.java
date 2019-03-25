@@ -1,5 +1,6 @@
 package com.example.user.application1;
 
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.app.FragmentActivity;
@@ -92,6 +93,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Getting parameters from SETTINGS Activity
 
+        SharedPreferences settings = getSharedPreferences("PREFS", 0);
+        Globals.FTlatitude = settings.getFloat("homeLatValue", (float)0.0);
+        Globals.FTlongitude = settings.getFloat("homeLongValue", (float)0.0);
+        Globals.phoneNumber = settings.getString("phoneNumber", "");
+
 
 
 
@@ -130,9 +136,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String latMy = String.valueOf(latitude);
                 String lngMy = String.valueOf(longitude);
 
+                String myLatHome = String.valueOf(Globals.FTlatitude);
+                String myLongHome = String.valueOf(Globals.FTlongitude);
+                String destination = myLatHome + ", " + myLongHome;
+
                 //Toast.makeText(this, "Navigation", Toast.LENGTH_SHORT).show();
                 String url = "http://maps.google.com/maps?saddr=" + latMy + ","
-                        + lngMy + "&daddr=" + "40.4001000, 49.8529000"; //here
+                        + lngMy + "&daddr=" + destination; //here
 
                 Intent navigation = new Intent(Intent.ACTION_VIEW);
                 navigation.setData(Uri.parse(url));
