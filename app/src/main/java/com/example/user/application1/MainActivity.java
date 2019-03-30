@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(startIntent);
             }
         });
-
         //Attempt to launch an activity outside our App
 
         Button googleBttn = (Button)findViewById(R.id.Google);
