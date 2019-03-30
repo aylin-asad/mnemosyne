@@ -269,7 +269,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
     public void sendWhatsAppMessage() {
         PackageManager packageManager = this.getPackageManager();
         Intent i = new Intent(Intent.ACTION_VIEW);
