@@ -77,7 +77,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final String CHANNEL_ID = "personal_notifications";
     private final int NOTIFICATION_ID = 001;
     private final float RADIUS = 6371;
-    private final float my_radius = (float) 0.4;
+    //private final float my_radius = (float) 0.4;
+    double my_radius = 400;
     private float distance;
     LocationManager locationManager;
     Location location;
@@ -191,11 +192,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
 
-                float dlat = (float) (latitude - Globals.FTlatitude);
-                float dlon = (float) (longitude - Globals.FTlongitude);
-                float a = (float) (Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(latitude) * Math.cos(Globals.FTlatitude) * Math.pow((Math.sin(dlon / 2)), 2));
-                float c = (float) (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-                float d = RADIUS * c;
+                Location loc1 = new Location("");
+                loc1.setLatitude(latitude);
+                loc1.setLongitude(longitude);
+
+                Location loc2  = new Location("");
+                loc2.setLatitude(Globals.FTlatitude);
+                loc2.setLongitude(Globals.FTlongitude);
+
+//                float dlat = (float) (latitude - Globals.FTlatitude);
+//                float dlon = (float) (longitude - Globals.FTlongitude);
+//                float a = (float) (Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(latitude) * Math.cos(Globals.FTlatitude) * Math.pow((Math.sin(dlon / 2)), 2));
+//                float c = (float) (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+//                float d = RADIUS * c;
+
+                float d = loc1.distanceTo(loc2);
 
                 distance = d;
 
