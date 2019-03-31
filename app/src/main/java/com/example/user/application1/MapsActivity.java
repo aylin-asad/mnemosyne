@@ -1,5 +1,6 @@
 package com.example.user.application1;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
@@ -57,6 +58,8 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -103,20 +106,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
         }
-        location = locationManager.getLastKnownLocation(locationManager
-                .getBestProvider(criteria, false));
 
-        //latitude = location.getLatitude();
-        //longitude = location.getLongitude();
 
-        latitude = 40.3595;
-        longitude = 49.8266;
+                location = locationManager.getLastKnownLocation(locationManager
+                        .getBestProvider(criteria, false));
+
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+
+
+
+
+        //latitude = 40.3595;
+        //longitude = 49.8266;
 
         //Instantiates a new CircleOptions object +  center/radius
         circleOptions = new CircleOptions()
@@ -177,9 +185,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void run() {
                 //call function
+                location = locationManager.getLastKnownLocation(locationManager
+                        .getBestProvider(criteria, false));
+
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+
+                float dlat = (float) (latitude - Globals.FTlatitude);
+                float dlon = (float) (longitude - Globals.FTlongitude);
+                float a = (float) (Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(latitude) * Math.cos(Globals.FTlatitude) * Math.pow((Math.sin(dlon / 2)), 2));
+                float c = (float) (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+                float d = RADIUS * c;
+
+                distance = d;
+
                 proximityAlert();
 
-                ha.postDelayed(this, 10000);
+                ha.postDelayed(this, 10000 );
             }
         }, 10000);
 
@@ -203,6 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (distance > my_radius) {
 
             displayNotification();
+            Toast.makeText(getApplicationContext(), "You're exiting your area", Toast.LENGTH_LONG).show();
 
         }
     }
@@ -300,7 +323,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             Intent i = new Intent(Intent.ACTION_SENDTO, uri);
             i.setType("text/plain");
-            
+
 
             getAddress(this, latitude, longitude);
             String text = currentAddress + "\n" + "Sent from Mnemosyne";
@@ -348,10 +371,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         yourMarkerOptions = new MarkerOptions();
         yourMarkerOptions.title("My Location");
         yourMarkerOptions.snippet("");
-        yourMarkerOptions.position(new LatLng(latitude,longitude));
+        yourMarkerOptions.position(new LatLng(latitude, longitude));
         //Set your marker icon using this method.
         //yourMarkerOptions.icon();
-
 
 
         //float zoomLevel = 16.0f; //This goes up to 21
@@ -373,29 +395,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+      final Handler handler1 = new Handler();
+       Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                onLocationChanged(location);
+                handler1.postDelayed(this, 1000);
+            }
+        };
+
+//Start
+        handler1.postDelayed(runnable, 1000);
+
+
 
     }
+
+
 
     @Override
     public void onLocationChanged(Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
 
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, this);
+
         //Place current location marker
         LatLng latLng = new LatLng(latitude, longitude);
+        marker.remove();
 
 
-        if(marker!=null){
-            marker.setPosition(latLng);
-        }else{
+       // if(marker!=null){
+           // marker.setPosition(latLng);
+       // }else{
             marker = mMap.addMarker(new MarkerOptions()
                     .position(latLng)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                     .title("I am here"));
-        }
+       // }
 
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
     }
 
 
