@@ -172,13 +172,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-        float dlat = (float) (latitude - Globals.FTlatitude);
-        float dlon = (float) (longitude - Globals.FTlongitude);
-        float a = (float) (Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(latitude) * Math.cos(Globals.FTlatitude) * Math.pow((Math.sin(dlon / 2)), 2));
-        float c = (float) (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-        float d = RADIUS * c;
-
-        distance = d;
+//        float dlat = (float) (latitude - Globals.FTlatitude);
+//        float dlon = (float) (longitude - Globals.FTlongitude);
+//        float a = (float) (Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(latitude) * Math.cos(Globals.FTlatitude) * Math.pow((Math.sin(dlon / 2)), 2));
+//        float c = (float) (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+//        float d = RADIUS * c;
+//
+//        distance = d;
 
         final Handler ha=new Handler();
         ha.postDelayed(new Runnable() {
