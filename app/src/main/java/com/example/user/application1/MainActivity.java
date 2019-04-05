@@ -86,5 +86,16 @@ public class MainActivity extends AppCompatActivity {
 //            }
         });
 
+        Button emergencyButton = (Button)findViewById(R.id.emergencyButton);
+        emergencyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String phone = (String)("+" + Globals.phoneNumber);
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null));
+                startActivity(intent);
+
+            }
+        });
+
     }
 }
